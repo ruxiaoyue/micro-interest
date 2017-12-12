@@ -1,0 +1,9 @@
+{
+  "http.host":"10.200.0.118",
+  "http.port":6379,
+  "mongo": {
+    "host": "10.200.2.118",
+    "port": 27017,
+    "db_name": "micro"
+  }
+}

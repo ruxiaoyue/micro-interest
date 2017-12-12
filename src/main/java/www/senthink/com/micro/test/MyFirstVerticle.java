@@ -100,6 +100,7 @@ public class MyFirstVerticle extends AbstractVerticle{
         vertx.createHttpServer().requestHandler(router::accept).listen(8080, handler ->{
             if (handler.succeeded()) {
                 LOGGER.debug("httpServer listen 8080");
+                future.complete();
             }
         });
 

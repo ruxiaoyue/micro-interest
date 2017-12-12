@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) " [%thread] %cyan(%logger{36}) " %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="test-file"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/var/log/test/-%d{yyyy-MM-dd}.log
+            </fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <root level="DEBUG">
+        <appender-ref ref="test-file" />
+    </root>
+
+    <logger name="test" level="DEBUG">
+        <appender-ref ref="console"/>
+    </logger>
+
+    <logger name="io.vertx.ext.web" level="ERROR">
+        <appender-ref ref="console"/>
+    </logger>
+
+    <logger name="io.vertx.ext.web" level="DEBUG">
+        <appender-ref ref="console"/>
+    </logger>
+
+</configuration>
