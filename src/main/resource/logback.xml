@@ -7,8 +7,7 @@
         </encoder>
     </appender>
 
-    <appender name="test-file"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="micro-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
             </pattern>
@@ -21,14 +20,18 @@
     </appender>
 
     <root level="DEBUG">
-        <appender-ref ref="test-file" />
+        <appender-ref ref="micro-file" />
     </root>
 
-    <logger name="test" level="DEBUG">
+    <logger name="www.senthink.com" level="DEBUG">
         <appender-ref ref="console"/>
     </logger>
 
-    <logger name="io.vertx.ext.web" level="ERROR">
+    <logger name="org.mongodb.driver.cluster" level="OFF">
+        <appender-ref ref="console"/>
+    </logger>
+
+    <logger name="org.mongodb.driver" level="ERROR">
         <appender-ref ref="console"/>
     </logger>
 

@@ -60,6 +60,12 @@
 
     <dependency>
       <groupId>io.vertx</groupId>
+      <artifactId>vertx-auth-common</artifactId>
+      <version>3.5.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.vertx</groupId>
       <artifactId>vertx-mongo-client</artifactId>
       <version>3.5.0</version>
     </dependency>
@@ -105,6 +111,13 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-config</artifactId>
+      <version>3.5.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-auth-jwt</artifactId>
+      <version>3.5.0</version>
     </dependency>
 
     <dependency>
