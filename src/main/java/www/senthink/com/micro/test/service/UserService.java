@@ -6,7 +6,7 @@ import io.vertx.core.json.JsonObject;
 import java.util.List;
 
 /**
- * Created by lenovo on 2017/12/12.
+ * Created by hyacinth on 2017/12/12.
  */
 public interface UserService {
 
