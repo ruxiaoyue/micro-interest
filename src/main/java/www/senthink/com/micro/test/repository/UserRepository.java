@@ -18,4 +18,8 @@ public interface UserRepository {
 
     Single<JsonObject> findByAccount(String account);
 
+    Single<Void> updateUserOfValable(String account, Long available, String code);
+
+    Single<Void> updatePassword(String password, String account);
+
 }

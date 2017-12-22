@@ -31,32 +31,37 @@ public class LoginHandler {
         String account = body.getString("account");
         String password = body.getString("password");
         Integer registration = body.getInteger("registration");
-        if (account == null || password == null && registration != null) {
+        LOGGER.debug("account={}, password={}, registeration={}", account, password, registration);
+        if (account == null || password == null || registration == null) {
             context.response().setStatusCode(400).putHeader("content-type", "application/json").end("params wrong");
-        }
+        }else {
+            LOGGER.debug("login check");
+            userService.findByAccount(account).setHandler(r -> {
+                if (r.succeeded()) {
+                    JsonObject user = r.result();
+                    if (user != null) {
+                        String pwd = user.getString("password");
+                        String md5Pwd = MD5Util.getMD5(password);
+                        LOGGER.debug("userPwd={}, md5pwd ={}", pwd, md5Pwd);
+                        if (pwd.equalsIgnoreCase(md5Pwd)
+                                && user.getInteger("registration").equals(registration)) {
 
-        userService.findByAccount(account).setHandler(r -> {
-            if (r.succeeded()) {
-                JsonObject user = r.result();
-                if (user != null) {
-                    String pwd = user.getString("password");
-                    String md5Pwd = MD5Util.getMD5(password);
-                    if (pwd.equalsIgnoreCase(md5Pwd)
-                            && user.getInteger("registration").equals(registration)) {
-
-                        String token = provider.generateToken(new JsonObject().put("account", account), new JWTOptions().setExpiresInMinutes(60l));
-                        JsonObject result = new JsonObject().put("username", user.getString("username")).put("token", token);
-                        context.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());
+                            String token = provider.generateToken(new JsonObject().put("account", account), new JWTOptions().setExpiresInMinutes(60l));
+                            JsonObject result = new JsonObject().put("username", user.getString("username")).put("token", token);
+                            context.response().setStatusCode(200).putHeader("content-type", "application/json").end(result.encodePrettily());
+                        }else {
+                            context.response().setStatusCode(400).putHeader("content-type", "application/json").end("password wrong");
+                        }
                     }else {
-                        context.response().setStatusCode(400).putHeader("content-type", "application/json").end("params wrong");
+                        context.response().setStatusCode(400).putHeader("content-type", "application/json").end("user is not exist");
                     }
                 }else {
-                    context.response().setStatusCode(400).putHeader("content-type", "application/json").end("user is not exist");
+                    context.response().setStatusCode(500).putHeader("content-type", "application/json").end("interval wrong");
                 }
-            }else {
-                context.response().setStatusCode(500).putHeader("content-type", "application/json").end("interval wrong");
-            }
-        });
+            });
+        }
+
+
 
 
     }

@@ -3,6 +3,8 @@ package www.senthink.com.micro.test.repository.impl;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.core.Vertx;
 import io.vertx.rxjava.ext.mongo.MongoClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rx.Single;
 import www.senthink.com.micro.test.repository.UserRepository;
 
@@ -16,6 +18,8 @@ public class UserRepositoryImpl implements UserRepository{
     private static final  String COLLECTION = "users";
 
     private final MongoClient mongoClient;
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(UserRepositoryImpl.class);
 
     public UserRepositoryImpl(io.vertx.core.Vertx vertx, JsonObject mongoConfig) {
 
@@ -43,5 +47,23 @@ public class UserRepositoryImpl implements UserRepository{
     public Single<List<JsonObject>> getLists() {
         JsonObject query = new JsonObject();
         return mongoClient.rxFind(COLLECTION, query);
+    }
+
+    @Override
+    public Single<Void> updateUserOfValable(String account, Long available, String code) {
+        JsonObject query = new JsonObject().put("account", account);
+        JsonObject userJson = new JsonObject().put("available", available).put("code", code);
+        JsonObject update = new JsonObject().put("$set", userJson);
+        LOGGER.debug("userJson={}", userJson);
+        return mongoClient.rxUpdateCollection(COLLECTION, query, update).map(r ->(Void)null);
+    }
+
+    @Override
+    public Single<Void> updatePassword(String password, String account) {
+        JsonObject query = new JsonObject().put("account", account);
+        JsonObject jon = new JsonObject().put("password", password);
+        JsonObject update = new JsonObject().put("$set", jon);
+        return mongoClient.rxUpdate(COLLECTION, query, update)
+                .map(r -> (Void) null);
     }
 }

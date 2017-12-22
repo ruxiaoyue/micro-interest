@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import www.senthink.com.micro.test.Util.MD5Util;
 import www.senthink.com.micro.test.common.BaseHttpHandler;
 import www.senthink.com.micro.test.modle.User;
+import www.senthink.com.micro.test.service.UserExtensionService;
 import www.senthink.com.micro.test.service.UserService;
 
 
@@ -17,13 +18,16 @@ public class UserHandler {
 
     private UserService userService;
 
+    private UserExtensionService userEService;
+
     private BaseHttpHandler baseHttpHandler;
 
     private final static Logger LOGGER = LoggerFactory.getLogger(UserHandler.class);
 
 
-    public UserHandler(UserService service, BaseHttpHandler baseHttpHandler){
+    public UserHandler(UserService service, UserExtensionService userEService, BaseHttpHandler baseHttpHandler){
         this.userService = service;
+        this.userEService = userEService;
         this.baseHttpHandler = baseHttpHandler;
     }
 
@@ -68,20 +72,52 @@ public class UserHandler {
         return true;
     }
 
+    /**
+     * 完善用户信息
+     * @param context
+     */
     public void completeUserInfo(RoutingContext context) {
-        LOGGER.debug("completeUserInfo");
         JsonObject body = context.getBodyAsJson();
-        if (body == null) {
-            baseHttpHandler.badRequest(context, "params is wrong");
+        String account = body.getString("account");
+        if (account != null && !account.equalsIgnoreCase("")) {
+            userEService.saveOrUpDate(account, body).setHandler(baseHttpHandler.resultVoidHandler(context, "operation success"));
         }else {
-
+            baseHttpHandler.badRequest(context, "params is wrong");
         }
     }
 
-    public void getUserLists() {
-
+    public void modifyUserInfo(RoutingContext context) {
+        JsonObject body = context.getBodyAsJson();
+        String account = body.getString("account");
+        if (account != null && !account.equalsIgnoreCase("")) {
+            userEService.saveOrUpDate(account, body).setHandler(baseHttpHandler.resultVoidHandler(context, "operation success"));
+        }else {
+            baseHttpHandler.badRequest(context, "params is wrong");
+        }
     }
 
 
+    /**
+     * 获取邮箱验证码
+     * @param context
+     */
+    public void getEmailCode(RoutingContext context) {
+        String account = context.request().getParam("account");
+        String email = context.request().getParam("email");
+        if (email ==null || account == null) {
+            baseHttpHandler.badRequest(context, "param is wrong");
+        }
+        userService.getMailCode(account, email).setHandler(baseHttpHandler.resultVoidHandler(context, "operation is success"));
+    }
+
+    /**
+     * 重置密码
+     * @param context
+     */
+    public void resetPassword(RoutingContext context) {
+        JsonObject body = context.getBodyAsJson();
+        LOGGER.debug("resetPwd body={}", body);
+        userService.resetPassword(body).setHandler(baseHttpHandler.resultVoidHandler(context, "reset password success"));
+    }
 
 }
